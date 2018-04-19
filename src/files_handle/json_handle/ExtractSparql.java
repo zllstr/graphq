@@ -135,11 +135,35 @@ public class ExtractSparql implements HandleFiles{
         }
         return result;
     }
+
+    public Map<String,List<String>> questionFriendlyNameEntity(String path) throws IOException {
+        Map<String,List<String>> result=new HashMap<>();
+        String input = FileUtils.readFileToString(new File(path), "UTF-8");
+        JSONArray json = JSONArray.fromObject(input);
+        for(int i=0;i<json.size();i++){
+            String question=json.getJSONObject(i).getString("question");
+            List<String> friendlyname=new ArrayList<>();
+            JSONObject graph_query=json.getJSONObject(i).getJSONObject("graph_query");
+            JSONArray nodes=graph_query.getJSONArray("nodes");
+            for(int j=0;j<nodes.size();j++){
+                if(nodes.getJSONObject(j).getString("node_type").equals("entity")){
+                    String fn=nodes.getJSONObject(j).getString("friendly_name");
+                    String id=nodes.getJSONObject(j).getString("id");
+                    if(friendlyname.contains(fn.toLowerCase())){
+                        System.out.println(question);
+                    }
+                    friendlyname.add(fn.toLowerCase().concat("\t").concat(id));
+                }
+            }
+            result.put(question,friendlyname);
+        }
+        return result;
+    }
     Set literalClasses(String path) throws IOException {
         Set literalClass=new HashSet();
         String input = FileUtils.readFileToString(new File(path), "UTF-8");
         JSONArray json = JSONArray.fromObject(input);
-      //  System.out.println(json.toString());
+        //  System.out.println(json.toString());
         for(int i=0;i<json.size();i++){
             String question=json.getJSONObject(i).getString("question");
             JSONObject graph_query=json.getJSONObject(i).getJSONObject("graph_query");
@@ -148,14 +172,37 @@ public class ExtractSparql implements HandleFiles{
             for(int j=0;j<nodes.size();j++){
                 String node_type=nodes.getJSONObject(j).getString("node_type");
                 if(node_type.equals("literal")){
-                 //   System.out.println(question);
-                      String literal_class=nodes.getJSONObject(j).getString("type_class");
-                      literalClass.add(literal_class);
+                    //   System.out.println(question);
+                    String literal_class=nodes.getJSONObject(j).getString("type_class");
+                    literalClass.add(literal_class);
                 }
             }
         }
         System.out.println(literalClass);
         return literalClass;
+    }
+
+    public Set<String> typeClasses(String path) throws IOException {
+        Set<String> nodeClass=new HashSet<>();
+        String input = FileUtils.readFileToString(new File(path), "UTF-8");
+        JSONArray json = JSONArray.fromObject(input);
+        //  System.out.println(json.toString());
+        for(int i=0;i<json.size();i++){
+            String question=json.getJSONObject(i).getString("question");
+            JSONObject graph_query=json.getJSONObject(i).getJSONObject("graph_query");
+            JSONArray nodes=graph_query.getJSONArray("nodes");
+            //System.out.println(question);
+            for(int j=0;j<nodes.size();j++){
+                String node_type=nodes.getJSONObject(j).getString("node_type");
+                if(node_type.equals("class")){
+                    //   System.out.println(question);
+                    String literal_class=nodes.getJSONObject(j).getString("id");
+                    nodeClass.add(literal_class);
+                }
+            }
+        }
+        System.out.println(nodeClass);
+        return nodeClass;
     }
     Map<String,String>questionGraphSparqls(String path) throws IOException {
         Map<String,String >questionSparqls=new HashMap<>();
@@ -293,11 +340,10 @@ public class ExtractSparql implements HandleFiles{
 
     }
 
-    Set relationGraphJson(String path) throws IOException {
-        Set entities=new HashSet();
+    public Set<String> relationGraphJson(String path) throws IOException {
+        Set<String> entities=new HashSet<>();
         String input = FileUtils.readFileToString(new File(path), "UTF-8");
         JSONArray json = JSONArray.fromObject(input);
-
         System.out.println(json.size());
         for(int i=0;i<json.size();i++){
             JSONObject graph_query=json.getJSONObject(i).getJSONObject("graph_query");

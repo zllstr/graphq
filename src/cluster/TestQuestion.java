@@ -32,12 +32,29 @@ public class TestQuestion implements HandleFiles{
         return result;
     }
 
+
+
     void writesomething() throws IOException {
 //        Set<String> questions=new ExtractSparql().questions("data\\graphquestions\\graphquestions.testing.json");
 //        Map<String,List<String>> quesPOSWORD=quesPOSWORD(questions);
 //        writeMapList(quesPOSWORD,"data\\graphquestions\\test.quespos.posword");
-        Map<String,List<String>> easyQuestions_quesPOSWORD=easyQuestions_quesPOSWORD();
-        writeMapList(easyQuestions_quesPOSWORD,"data\\graphquestions\\test.easy.quespos.posword");
+  //      Map<String,List<String>> easyQuestions_quesPOSWORD=easyQuestions_quesPOSWORD();
+   //     writeMapList(easyQuestions_quesPOSWORD,"data\\graphquestions\\test.easy.quespos.posword");
+        Map<String,List<String>> questionFriendlyNameEntity=new ExtractSparql().questionFriendlyNameEntity("data\\\\graphquestions\\\\graphquestions.training.json");
+        writeMapList(questionFriendlyNameEntity,"data\\graphquestions\\train.question.friendlyname.entity");
+//        Set<String> traintypeClasses=new ExtractSparql().typeClasses("data\\graphquestions\\graphquestions.training.json");
+//        Set<String> testtypeClasses=new ExtractSparql().typeClasses("data\\graphquestions\\graphquestions.testing.json");
+//        writeSet(traintypeClasses,"train.nodeclass.id");
+//        writeSet(testtypeClasses,"test.nodeclass.id");
+//        traintypeClasses.retainAll(testtypeClasses);
+//        writeSet(traintypeClasses,"intersect.nodeclass.id");
+//        Set<String> traintypeClasses=new ExtractSparql().relationGraphJson("data\\graphquestions\\graphquestions.training.json");
+//        Set<String> testtypeClasses=new ExtractSparql().relationGraphJson("data\\graphquestions\\graphquestions.testing.json");
+//        writeSet(traintypeClasses,"data\\test\\train.edge.relation");
+//        writeSet(testtypeClasses,"data\\test\\test.edge.relation");
+//        traintypeClasses.retainAll(testtypeClasses);
+//        writeSet(traintypeClasses,"data\\test\\intersect.edge.relation");
+
     }
 
     public static void main(String[]args) throws IOException {

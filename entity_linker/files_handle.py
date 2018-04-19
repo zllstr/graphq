@@ -231,6 +231,16 @@ def write_dict(dict,write_file):
         fi.write("\n")
     fi.close()
 
+def write_dict_str(dict,write_file):
+    fi = open(write_file, "w", encoding="utf-8")
+    for key in dict:
+        fi.write(key)
+        fi.write("\n")
+        value = dict[key]
+        fi.write(value)
+        fi.write("\n")
+    fi.close()
+
 def write_set(seta,write_file):
     fi = open(write_file, "w", encoding="utf-8")
     for key in seta:
@@ -345,6 +355,28 @@ def read_posques_posword(path):
                     pos_word_list.append(pos_word)
             result[ques]=pos_word_list
             line=mm.readline()
+    mm.close()
+    return result
+
+def read_ques_fn_entity(path):
+    result = dict()
+    with open(path, 'r', encoding="utf-8") as f:
+        mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+        #   offset = mm.tell()
+        line = mm.readline()
+        while line:
+            #  print(line)
+            ques = line.decode().strip()
+            line = mm.readline()
+            pos_word_list = list()
+            if line:
+                pos_words = line.decode().strip().split("###")
+                #   print(pos+"###"+str(sentences))
+                for pos_word in pos_words:
+                    if pos_word != "":
+                        pos_word_list.append(pos_word)
+                result[ques] = pos_word_list
+            line = mm.readline()
     mm.close()
     return result
 def entity_id_map_all():

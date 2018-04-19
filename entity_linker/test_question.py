@@ -9,8 +9,8 @@ graphq_alias_entity=alias_entity()
 print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
 graph_nameentity=name_entity()
 print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-# name_entitygraphq_pro_clueweb=clueweb_name_entity()
-# print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+name_entitygraphq_pro_clueweb=clueweb_name_entity()
+print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
 
 
 def posword_wordlist(posword):
@@ -69,22 +69,23 @@ def entity_link(posword):
                         entity_pros[entity] = pro_new
                     else:
                         entity_pros[entity] = float(1.5)
-        # if phrase in name_entitygraphq_pro_clueweb:
-        #     entity_pro = name_entitygraphq_pro_clueweb[phrase]
-        #     for entity in entity_pro:
-        #         if ("m." in entity) | ("en." in entity):
-        #             if entity in entity_pros:
-        #                 pro_old = entity_pros[entity]
-        #                 pro_new = (pro_old + entity_pro[entity]) / 2.0
-        #                 entity_pros[entity] = pro_new
-        #             else:
-        #                 entity_pros[entity] = entity_pro[entity]
+        if phrase in name_entitygraphq_pro_clueweb:
+            entity_pro = name_entitygraphq_pro_clueweb[phrase]
+            for entity in entity_pro:
+                if ("m." in entity) | ("en." in entity):
+                    if entity in entity_pros:
+                        pro_old = entity_pros[entity]
+                        pro_new = (pro_old + entity_pro[entity]) / 2.0
+                        entity_pros[entity] = pro_new
+                    else:
+                        entity_pros[entity] = entity_pro[entity]
         if len(entity_pros)!=0:
            phrasen_entity_pro[phrasen]=entity_pros
     return phrasen_entity_pro
 
 def conquer():
-    question_posword=read_posques_posword("..\\data\\test\\test.quespos.posword")
+  #  question_posword=read_posques_posword("..\\data\\test\\test.quespos.posword")
+    question_posword=read_posques_posword("..\\data\\test\\test.easy.quespos.posword")
     entity_match=dict()
     for question in question_posword:
         posword=question_posword[question]
