@@ -206,8 +206,6 @@ def test_questions_entity_friendlyname():
     print(len(test_entity_friendlyname_remain))
   #  print(test_entity_friendlyname_remain)
     test_entity_friname=entity_friendlyname(test_entity_friendlyname_remain)
-  #  miss_after_alias_name = graphentitynamemiss(test_entity_friname)
-  #  test_friname_entity=friendlyname_entity(test_entity_friendlyname_remain)
     miss_after_alias=graphentityalias_miss(test_entity_friname)
     test_entity_friname_miss_after_alias=entity_friendlyname(miss_after_alias)
     miss_after_alias_name = graphentitynamemiss(test_entity_friname_miss_after_alias)
@@ -215,4 +213,7 @@ def test_questions_entity_friendlyname():
     miss_after_alias_name_clueweb = cluewebmiss(test_entity_friname_miss_after_alias_name)
     files_handle.write_set(miss_after_alias_name_clueweb, "..\\data\\entity\\graphquestions.testing.entityFriendlynamemiss")
 
-test_questions_entity_friendlyname()
+def mentionEntityVocabularyForTest():
+    train_entity_friendlyname = files_handle.read_set("..\\data\\entity\\graphquestions.training.entityFriendlyname")
+#test_questions_entity_friendlyname()
+mentionEntityVocabularyForTest()

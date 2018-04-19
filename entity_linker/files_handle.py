@@ -1,5 +1,6 @@
 import mmap
 
+from entity_linker.name_entity_files_handle import clueweb_entity_exchange
 
 
 def read_dict(pathfile):
@@ -104,6 +105,8 @@ def read_set(read_path):
     f.close()
     return seta
 
+
+
 def read_dict_dict(pathfile):
     diction = dict()
     with open(pathfile, 'r') as f:
@@ -193,6 +196,26 @@ def write_dict_dict(dict,write_file):
             fi.write(": ")
             fi.write(str(value[val]))
             fi.write("\t")
+        fi.write("\n")
+    fi.close()
+
+
+def write_dict_dict_dict(dict,write_file):
+    fi = open(write_file, "w", encoding="utf-8")
+    for key in dict:
+        fi.write(key)
+        fi.write("\n")
+        value = dict[key]
+        for val in value:
+            fi.write(val)
+            fi.write("\t")
+            valuev=value[val]
+            for valval in valuev:
+                fi.write(valval)
+                fi.write(":")
+                fi.write(str(valuev[valval]))
+                fi.write("\t")
+            fi.write("\n")
         fi.write("\n")
     fi.close()
 
@@ -303,12 +326,42 @@ def adddict(dicta,dictb):
             dictc[key]=dictb[key]
     return dictc
 
+
+def read_posques_posword(path):
+    result=dict()
+    with open(path, 'r',encoding="utf-8") as f:
+        mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+     #   offset = mm.tell()
+        line = mm.readline()
+        while line:
+          #  print(line)
+            ques=line.decode().strip().split("###")[1]
+            line = mm.readline()
+            pos_word_list=list()
+            pos_words=line.decode().strip().split("###")
+         #   print(pos+"###"+str(sentences))
+            for pos_word in pos_words:
+                if pos_word!="":
+                    pos_word_list.append(pos_word)
+            result[ques]=pos_word_list
+            line=mm.readline()
+    mm.close()
+    return result
 def entity_id_map_all():
     dicta = read_entity_id_map("..\\data\\entity\\freebase-rdf-2013-06-09-00-00.canonical-id-map")
     dictb = read_dict_extract_reverse("..\\data\\entity\\graphquestions_add_score_by_name_alias_sameID_choose_clueweb_onebyone")
     dictc = read_dict_extract_reverse("..\\data\\entity\\graphquestions_add_score_by_name_alias_sameid_choose_clueweb_typepre")
     dictall = adddict(dicta, adddict(dictb, dictc))
     return dictall
+
+def name_entitygraphq_pro_clueweb_write():
+    entity_id_map_all_dict = entity_id_map_all()
+    #   print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+    name_entity_pro_clueweb = read_dict_dict_lowercase(
+        "..\\data\\entity\\clueweb_mention_proconmen_entitylist")
+    name_entitygraphq_pro_clueweb = clueweb_entity_exchange(name_entity_pro_clueweb, entity_id_map_all_dict)
+    write_dict_dict(name_entitygraphq_pro_clueweb,"..\\data\\entity\\clueweb_mention_proconmen_entitygraphquestionslist")
+name_entitygraphq_pro_clueweb_write()
 # entity_graphq=read_set("..\\data\\entity\\entities_graphq")
 # dicta=read_entity_id_map_reverse("..\\data\\entity\\freebase-rdf-2013-06-09-00-00.canonical-id-map")
 # dictb=read_dict_extract("..\\data\\entity\\graphquestions_add_score_by_name_alias_sameID_choose_clueweb_onebyone")
