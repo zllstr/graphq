@@ -1,6 +1,8 @@
 import time
 
 from entity_linker import files_handle
+from entity_linker.files_handle import write_dict
+
 
 def friendlyname_entity_exchange(entity_friendlyname):
     dicta = dict()
@@ -80,3 +82,10 @@ def clueweb_name_entity():
         "..\\data\\entity\\clueweb_mention_proconmen_entitylist")
     name_entitygraphq_pro_clueweb=clueweb_entity_exchange(name_entity_pro_clueweb, entity_id_map_all_dict)
     return name_entitygraphq_pro_clueweb
+
+# entity_id_map_all_dict = files_handle.entity_id_map_all()
+# for entity in entity_id_map_all_dict:
+#     x=len(entity_id_map_all_dict[entity])
+#     if x>1:
+#         print(entity)
+# write_dict(entity_id_map_all_dict,"..\\data\\entity\\id-map")

@@ -35,13 +35,17 @@ public class TestQuestion implements HandleFiles{
 
 
     void writesomething() throws IOException {
-//        Set<String> questions=new ExtractSparql().questions("data\\graphquestions\\graphquestions.testing.json");
-//        Map<String,List<String>> quesPOSWORD=quesPOSWORD(questions);
-//        writeMapList(quesPOSWORD,"data\\graphquestions\\test.quespos.posword");
+        List<String> easyquesEdge=new ExtractSparql().easyquesEdge("data\\\\graphquestions\\\\graphquestions.testing.json");
+        List<String> easyquesType=new ExtractSparql().easyquesType("data\\\\graphquestions\\\\graphquestions.testing.json");
+        new TestQuestion().write(easyquesEdge,"data\\test\\test.easy.ques.edge");
+        new TestQuestion().write(easyquesType,"data\\test\\test.easy.ques.type");
+     //   Set<String> questions=new ExtractSparql().questions("data\\graphquestions\\graphquestions.training.json");
+    //    Map<String,List<String>> quesPOSWORD=quesPOSWORD(questions);
+     //   writeMapList(quesPOSWORD,"data\\graphquestions\\train.quespos.posword");
   //      Map<String,List<String>> easyQuestions_quesPOSWORD=easyQuestions_quesPOSWORD();
    //     writeMapList(easyQuestions_quesPOSWORD,"data\\graphquestions\\test.easy.quespos.posword");
-        Map<String,List<String>> questionFriendlyNameEntity=new ExtractSparql().questionFriendlyNameEntity("data\\\\graphquestions\\\\graphquestions.training.json");
-        writeMapList(questionFriendlyNameEntity,"data\\graphquestions\\train.question.friendlyname.entity");
+  //      Map<String,List<String>> questionFriendlyNameEntity=new ExtractSparql().questionFriendlyNameEntity("data\\\\graphquestions\\\\graphquestions.training.json");
+  //      writeMapList(questionFriendlyNameEntity,"data\\graphquestions\\train.question.friendlyname.entity");
 //        Set<String> traintypeClasses=new ExtractSparql().typeClasses("data\\graphquestions\\graphquestions.training.json");
 //        Set<String> testtypeClasses=new ExtractSparql().typeClasses("data\\graphquestions\\graphquestions.testing.json");
 //        writeSet(traintypeClasses,"train.nodeclass.id");

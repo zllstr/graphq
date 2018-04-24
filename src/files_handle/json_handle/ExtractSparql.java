@@ -113,6 +113,95 @@ public class ExtractSparql implements HandleFiles{
 
         return result;
     }
+
+
+    public List<String> easyquesEdge(String path) throws IOException {
+        List<String> result=new ArrayList<>();
+        String input = FileUtils.readFileToString(new File(path), "UTF-8");
+        JSONArray json = JSONArray.fromObject(input);
+        System.out.println(json.size());
+        for(int i=0;i<json.size();i++){
+            String question=json.getJSONObject(i).getString("question");
+            String function=json.getJSONObject(i).getString("function");
+            String num_node=Integer.toString(json.getJSONObject(i).getInt("num_node"));
+            String num_edge=Integer.toString(json.getJSONObject(i).getInt("num_edge"));
+            JSONObject graph_query=json.getJSONObject(i).getJSONObject("graph_query");
+            JSONArray nodes=graph_query.getJSONArray("nodes");
+            Integer num_node_class=0;
+            Integer num_node_entity=0;
+            Integer num_node_literal_int=0;
+            Integer num_node_literal_datetime=0;
+            Integer num_node_literal_float=0;
+            for(int j=0;j<nodes.size();j++){
+                String node_type=nodes.getJSONObject(j).getString("node_type");
+                if(node_type.equals("class")){
+                    num_node_class+=1;
+                }else if(node_type.equals("entity")){
+                    num_node_entity+=1;
+                }else if(node_type.equals("literal")){
+                    String literal_type=nodes.getJSONObject(j).getString("type_class");
+                    if(literal_type.equals("type.int")){
+                        num_node_literal_int+=1;
+                    }else if(literal_type.equals("type.datetime")){
+                        num_node_literal_datetime+=1;
+                    }else if(literal_type.equals("type.float")){
+                        num_node_literal_float+=1;
+                    }
+                }
+            }
+            String key=function.concat("\t").concat(num_node).concat("\t").concat(num_edge).concat("\t").concat(num_node_class.toString()).concat("\t").concat(num_node_entity.toString()).concat("\t").concat(num_node_literal_int.toString()).concat("\t").concat(num_node_literal_datetime.toString()).concat("\t").concat(num_node_literal_float.toString());
+            if(key.equals("none\t2\t1\t1\t1\t0\t0\t0")){
+                JSONArray edges=graph_query.getJSONArray("edges");
+                result.add(question.concat("\t").concat(edges.getJSONObject(0).getString("relation")));
+            }
+        }
+
+        return result;
+    }
+
+    public List<String> easyquesType(String path) throws IOException {
+        List<String> result=new ArrayList<>();
+        String input = FileUtils.readFileToString(new File(path), "UTF-8");
+        JSONArray json = JSONArray.fromObject(input);
+        System.out.println(json.size());
+        for(int i=0;i<json.size();i++){
+            String question=json.getJSONObject(i).getString("question");
+            String function=json.getJSONObject(i).getString("function");
+            String num_node=Integer.toString(json.getJSONObject(i).getInt("num_node"));
+            String num_edge=Integer.toString(json.getJSONObject(i).getInt("num_edge"));
+            JSONObject graph_query=json.getJSONObject(i).getJSONObject("graph_query");
+            JSONArray nodes=graph_query.getJSONArray("nodes");
+            Integer num_node_class=0;
+            Integer num_node_entity=0;
+            Integer num_node_literal_int=0;
+            Integer num_node_literal_datetime=0;
+            Integer num_node_literal_float=0;
+            for(int j=0;j<nodes.size();j++){
+                String node_type=nodes.getJSONObject(j).getString("node_type");
+                if(node_type.equals("class")){
+                    num_node_class+=1;
+                }else if(node_type.equals("entity")){
+                    num_node_entity+=1;
+                }else if(node_type.equals("literal")){
+                    String literal_type=nodes.getJSONObject(j).getString("type_class");
+                    if(literal_type.equals("type.int")){
+                        num_node_literal_int+=1;
+                    }else if(literal_type.equals("type.datetime")){
+                        num_node_literal_datetime+=1;
+                    }else if(literal_type.equals("type.float")){
+                        num_node_literal_float+=1;
+                    }
+                }
+            }
+            String key=function.concat("\t").concat(num_node).concat("\t").concat(num_edge).concat("\t").concat(num_node_class.toString()).concat("\t").concat(num_node_entity.toString()).concat("\t").concat(num_node_literal_int.toString()).concat("\t").concat(num_node_literal_datetime.toString()).concat("\t").concat(num_node_literal_float.toString());
+            if(key.equals("none\t2\t1\t1\t1\t0\t0\t0")){
+
+                result.add(question.concat("\t").concat(nodes.getJSONObject(0).getString("id")));
+            }
+        }
+
+        return result;
+    }
     public Map<String,List<String>> questionFriendlyNames(String path) throws IOException {
         Map<String,List<String>> result=new HashMap<>();
         String input = FileUtils.readFileToString(new File(path), "UTF-8");
@@ -360,6 +449,7 @@ public class ExtractSparql implements HandleFiles{
         return entities;
 
     }
+
 
 
     Set<String> questionEntity(String pathfile) throws IOException {

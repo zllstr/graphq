@@ -1,6 +1,6 @@
 import mmap
 
-from entity_linker.name_entity_files_handle import clueweb_entity_exchange
+#from entity_linker.name_entity_files_handle import clueweb_entity_exchange
 
 
 def read_dict(pathfile):
@@ -223,7 +223,7 @@ def write_dict(dict,write_file):
     fi = open(write_file, "w", encoding="utf-8")
     for key in dict:
         fi.write(key)
-        fi.write("\n")
+        fi.write("\t")
         value = dict[key]
         for val in value:
             fi.write(val)
@@ -386,14 +386,14 @@ def entity_id_map_all():
     dictall = adddict(dicta, adddict(dictb, dictc))
     return dictall
 
-def name_entitygraphq_pro_clueweb_write():
-    entity_id_map_all_dict = entity_id_map_all()
-    #   print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-    name_entity_pro_clueweb = read_dict_dict_lowercase(
-        "..\\data\\entity\\clueweb_mention_proconmen_entitylist")
-    name_entitygraphq_pro_clueweb = clueweb_entity_exchange(name_entity_pro_clueweb, entity_id_map_all_dict)
-    write_dict_dict(name_entitygraphq_pro_clueweb,"..\\data\\entity\\clueweb_mention_proconmen_entitygraphquestionslist")
-name_entitygraphq_pro_clueweb_write()
+# def name_entitygraphq_pro_clueweb_write():
+#     entity_id_map_all_dict = entity_id_map_all()
+#     #   print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+#     name_entity_pro_clueweb = read_dict_dict_lowercase(
+#         "..\\data\\entity\\clueweb_mention_proconmen_entitylist")
+#     name_entitygraphq_pro_clueweb = clueweb_entity_exchange(name_entity_pro_clueweb, entity_id_map_all_dict)
+#     write_dict_dict(name_entitygraphq_pro_clueweb,"..\\data\\entity\\clueweb_mention_proconmen_entitygraphquestionslist")
+#name_entitygraphq_pro_clueweb_write()
 # entity_graphq=read_set("..\\data\\entity\\entities_graphq")
 # dicta=read_entity_id_map_reverse("..\\data\\entity\\freebase-rdf-2013-06-09-00-00.canonical-id-map")
 # dictb=read_dict_extract("..\\data\\entity\\graphquestions_add_score_by_name_alias_sameID_choose_clueweb_onebyone")

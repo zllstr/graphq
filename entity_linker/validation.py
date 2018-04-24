@@ -216,4 +216,4 @@ def test_questions_entity_friendlyname():
 def mentionEntityVocabularyForTest():
     train_entity_friendlyname = files_handle.read_set("..\\data\\entity\\graphquestions.training.entityFriendlyname")
 #test_questions_entity_friendlyname()
-mentionEntityVocabularyForTest()
+#mentionEntityVocabularyForTest()
