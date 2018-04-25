@@ -271,7 +271,26 @@ def read_entity_id_map_reverse(read_path):
     f.close()
     return dicta
 
-
+def read_dict_choose(pathfile):
+    diction=dict()
+    with open(pathfile, 'r',encoding='utf-8') as f:
+        mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+        line = mm.readline()
+        while line:
+            cols = line.decode().strip().split('\t')
+           # print(cols)
+            entity = cols[0]
+            del cols[0]
+            val = set()
+            for col in cols:
+                qiege=col.split("###")
+                predicate_type="###".join([qiege[0],qiege[2]])
+                val.add(predicate_type)
+            diction[entity]=val
+            line = mm.readline()
+    mm.close()
+    f.close()
+    return diction
 
 def read_dict_extract_reverse(pathfile):
     diction = dict()

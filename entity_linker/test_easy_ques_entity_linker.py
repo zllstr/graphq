@@ -380,7 +380,7 @@ def entities_hit():
                 entities.add(entity)
     return entities
 
-entity=entities_hit()
-write_set(entity,"..\\data\\test\\test.easy.partial.entities")
+# entity=entities_hit()
+# write_set(entity,"..\\data\\test\\test.easy.partial.entities")
 #entity_match=conquer()
 #write_dict_dict_dict(entity_match,"..\\data\\test\\test.easy.entitymatch")
