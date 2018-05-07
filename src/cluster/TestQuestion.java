@@ -5,6 +5,8 @@ import java.util.*;
 
 import files_handle.HandleFiles;
 import files_handle.json_handle.*;
+import parser.StandfordParser;
+
 /**
  * Created by Dell on 2018/4/19.
  */
@@ -31,14 +33,39 @@ public class TestQuestion implements HandleFiles{
         }
         return result;
     }
-
+    Map<String,Set<String>> ques_NPIndexRange(Set<String> questions){
+        StandfordParser stdfp=new StandfordParser();
+        Map<String,Set<String>> result=new HashMap<>();
+        for(String ques : questions){
+            Set<String>indexranges=stdfp.indexRangeNP(ques);
+            result.put(ques,indexranges);
+        }
+        return result;
+    }
+    Map<String,Set<String>> testeasyques_NPIndexRange() throws IOException {
+        Map<String,Set<String>> result=new HashMap<>();
+        Map<String,List<String>> propertynameQuestions=new ExtractSparql().propertynameQuestions("data\\graphquestions\\graphquestions.testing.json");
+        for(String property:propertynameQuestions.keySet()){
+            if(property.equals("none\t2\t1\t1\t1\t0\t0\t0")){
+                List<String> easyqueslist=propertynameQuestions.get(property);
+                Set<String>easyquesset= new HashSet<>();
+                for(String ques : easyqueslist){
+                    easyquesset.add(ques);
+                }
+                result=ques_NPIndexRange(easyquesset);
+            }
+        }
+        return result;
+    }
 
 
     void writesomething() throws IOException {
-        List<String> easyquesEdge=new ExtractSparql().easyquesEdge("data\\\\graphquestions\\\\graphquestions.testing.json");
-        List<String> easyquesType=new ExtractSparql().easyquesType("data\\\\graphquestions\\\\graphquestions.testing.json");
-        new TestQuestion().write(easyquesEdge,"data\\test\\test.easy.ques.edge");
-        new TestQuestion().write(easyquesType,"data\\test\\test.easy.ques.type");
+        Map<String,Set<String>> easyques_NPIndexRange=testeasyques_NPIndexRange();
+        writeMapSet(easyques_NPIndexRange,"data\\\\test\\\\test.easy.ques.np.index.range");
+//        List<String> easyquesEdge=new ExtractSparql().easyquesEdge("data\\\\graphquestions\\\\graphquestions.testing.json");
+//        List<String> easyquesType=new ExtractSparql().easyquesType("data\\\\graphquestions\\\\graphquestions.testing.json");
+//        new TestQuestion().write(easyquesEdge,"data\\test\\test.easy.ques.edge");
+//        new TestQuestion().write(easyquesType,"data\\test\\test.easy.ques.type");
      //   Set<String> questions=new ExtractSparql().questions("data\\graphquestions\\graphquestions.training.json");
     //    Map<String,List<String>> quesPOSWORD=quesPOSWORD(questions);
      //   writeMapList(quesPOSWORD,"data\\graphquestions\\train.quespos.posword");

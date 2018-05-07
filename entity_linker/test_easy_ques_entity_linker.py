@@ -8,13 +8,13 @@ from entity_linker.name_entity_files_handle import friendlyname_entity, alias_en
 
 print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
 train_friendlyname_entity=friendlyname_entity()
-print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-graphq_alias_entity=alias_entity()
-print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-graph_nameentity=name_entity()
-print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-name_entitygraphq_pro_clueweb=clueweb_name_entity()
-print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+# print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+# graphq_alias_entity=alias_entity()
+# print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+# graph_nameentity=name_entity()
+# print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+# name_entitygraphq_pro_clueweb=clueweb_name_entity()
+# print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
 def posword_wordlist(posword):
     word_list=list()
     for pos_word in posword:
@@ -39,6 +39,8 @@ def combine_wordlist(word_list):
             phrases.append(word)
     return phrases
 
+
+
 def friendlyname_entity_match(phrases):
     phrase_frnentity=dict()
     for phrase in phrases:
@@ -50,6 +52,46 @@ def friendlyname_entity_match(phrases):
                entity_pros[entity] =float(2.0)
             phrase_frnentity[phrase]=entity_pros
     return phrase_frnentity
+
+def friendlyname_entity_match_one(phrase):
+    entity_pros=dict()
+  #  range=phrasen.split("\t")[1]
+    if phrase in train_friendlyname_entity:
+        entities=train_friendlyname_entity[phrase]
+        for entity in entities:
+           entity_pros[entity] =float(2.0)
+    return entity_pros
+
+def aliases_entity_match_one(phrase):
+    entity_pros=dict()
+  #  range=phrasen.split("\t")[1]
+    if phrase in graphq_alias_entity:
+        entities=graphq_alias_entity[phrase]
+        for entity in entities:
+           entity_pros[entity] =float(1.0)
+    return entity_pros
+
+def name_entity_match_one(phrase):
+    entity_pros=dict()
+  #  range=phrasen.split("\t")[1]
+    if phrase in graph_nameentity:
+        entities=graph_nameentity[phrase]
+        for entity in entities:
+            if ("m." in entity) | ("en." in entity):
+                entity_pros[entity] =float(1.5)
+    return entity_pros
+
+def clueweb_entity_match_one(phrase):
+
+    entity_pros=dict()
+  #  range=phrasen.split("\t")[1]
+    if phrase in name_entitygraphq_pro_clueweb:
+        entity_pro=name_entitygraphq_pro_clueweb[phrase]
+        for entity in entity_pro:
+            if ("m." in entity) | ("en." in entity):
+                entity_pros[entity] =entity_pro[entity]
+
+    return entity_pros
 
 def aliases_entity_match(phrases):
     phrase_aliaentity=dict()
@@ -295,6 +337,30 @@ def mention_pos_equal(test_question_posword,train_question_posword,train_questio
         print(test_ques)
         print(test_pos_equal_mention[test_ques])
     print(len(test_pos_equal_mention))
+    return test_pos_equal_mention
+
+def mention_position_pos_equal(test_question_posword,train_question_posword,train_question_fnentity):
+    test_pos_equal_mention=dict()
+    testeasy_trainques=pos_equal()
+    for test_ques in testeasy_trainques:
+        test_posword = test_question_posword[test_ques]
+        test_word_list = posword_wordlist(test_posword)
+        trainquestions=testeasy_trainques[test_ques]
+        mention_i_j_all=set()
+        for trainques in trainquestions:
+            fr_entity = train_question_fnentity[trainques]
+            train_posword = train_question_posword[trainques]
+            train_word_list = posword_wordlist(train_posword)
+            mention_i_j=train_frname_position(fr_entity,train_posword)
+            mention_i_j_all=mention_i_j_all|mention_i_j
+        if len(mention_i_j_all)==0:
+            print(test_ques+"\t"+trainquestions)
+        else:
+            test_pos_equal_mention[test_ques]=mention_i_j_all
+    # for test_ques in test_pos_equal_mention:
+    #     print(test_ques)
+    #     print(test_pos_equal_mention[test_ques])
+    # print(len(test_pos_equal_mention))
     return test_pos_equal_mention
 
 def add_dict_dict(dict1,dict2):

@@ -189,8 +189,10 @@ def write_dict_dict(dict,write_file):
     fi = open(write_file, "w", encoding="utf-8")
     for key in dict:
         fi.write(key)
-        fi.write("\t")
+        fi.write("\n")
         value = dict[key]
+        fi.write(str(len(value)))
+        fi.write("\t")
         for val in value:
             fi.write(val)
             fi.write(": ")
@@ -208,7 +210,7 @@ def write_dict_dict_dict(dict,write_file):
         value = dict[key]
         for val in value:
             fi.write(val)
-            fi.write("\t")
+            fi.write("###")
             valuev=value[val]
             for valval in valuev:
                 fi.write(valval)
@@ -222,12 +224,14 @@ def write_dict_dict_dict(dict,write_file):
 def write_dict(dict,write_file):
     fi = open(write_file, "w", encoding="utf-8")
     for key in dict:
-        fi.write(key)
-        fi.write("\t")
+        fi.write(str(key))
+        fi.write("\n")
         value = dict[key]
+        fi.write(str(len(value)))
+        fi.write("\n")
         for val in value:
             fi.write(val)
-            fi.write("\t")
+            fi.write("\n")
         fi.write("\n")
     fi.close()
 
@@ -235,7 +239,7 @@ def write_dict_str(dict,write_file):
     fi = open(write_file, "w", encoding="utf-8")
     for key in dict:
         fi.write(key)
-        fi.write("\n")
+        fi.write("###")
         value = dict[key]
         fi.write(value)
         fi.write("\n")

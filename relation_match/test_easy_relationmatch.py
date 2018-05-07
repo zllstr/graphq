@@ -6,6 +6,9 @@ from entity_linker.name_entity_files_handle import name_entity
 
 
 #include type
+from word_handle.wordnet import get_synset_words, get_derivationally_related_forms
+
+
 def name_relation():
     name_relation_=dict()
     graph_nameentity = name_entity()
@@ -29,7 +32,35 @@ def handle_entity_predicate_answer_type():
     type_lessimportantwords = generate_lessimportant_words(types)
     predicate_words = generate_pretype_words(predicates)
     type_words = generate_pretype_words(types)
-    return entity_predicate_type,predicate_words,type_words,predicate_importantwords,predicate_lessimportantwords,type_importantwords,type_lessimportantwords
+    predicate_importantwords_synsetwords=generate_synsetwords(predicate_importantwords)
+    type_importantwords_synsetwords=generate_synsetwords(type_importantwords)
+    predicate_synsetwords = generate_synsetwords(predicate_words)
+    type_synsetwords = generate_synsetwords(type_words)
+    return entity_predicate_type,predicate_synsetwords,type_synsetwords,predicate_importantwords_synsetwords,type_importantwords_synsetwords,predicate_words,type_words,predicate_importantwords,predicate_lessimportantwords,type_importantwords,type_lessimportantwords
+
+def generate_synsetwords(pre_words):
+    pre_wordsandsynsets=dict()
+    for pre in pre_words:
+        words=pre_words[pre]
+        words_new=words.copy()
+        for word in words:
+            synsets=get_synset_words(word)
+            deriva_words=get_derivationally_related_forms(word)
+            words_new=words_new|synsets
+            words_new=words_new|deriva_words
+        pre_wordsandsynsets[pre]=words_new
+    return pre_wordsandsynsets
+
+def generate_synset_der_words(words):
+    wordsandsynsetsder=words.copy()
+    for word in words:
+        synsets=get_synset_words(word)
+        deriva_words=get_derivationally_related_forms(word)
+        wordsandsynsetsder=wordsandsynsetsder|synsets
+        wordsandsynsetsder=wordsandsynsetsder|deriva_words
+
+    return wordsandsynsetsder
+
 def handle_entity_predicate_answer_type_reverse():
   #  print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
    # entity_predicate_type=read_dict_choose("../data/test/test.easy.partial.entities.predicates.answer.type")
@@ -176,6 +207,30 @@ def generate_question_entity_pro_relation_words_concerned():
     write_dict(question_entity_pro_relation_words_concerned,"../data/relation/test.easy.partial.question_entity_pro_relation_words_concerned")
     return question_entity_pro_relation_words_concerned
 
+def generate_question_entity_pro_relation_words():
+    entity_match = conquer()
+    question_posword = read_posques_posword("../data/test/test.easy.quespos.posword")
+    question_entity_pro_relation_words_concerned = dict()
+    for ques_fnentity in entity_match:
+        phrases = entity_match[ques_fnentity]
+        ques = ques_fnentity.split("###")[0]
+        posword = question_posword[ques]
+        word_list = posword_wordlist(posword)
+        for phrase in phrases:
+            if (phrase != "on") & (phrase != "the") & (phrase != "of"):
+                words_phrase = phrase.split(" ")
+                # for word_phrase in set(words_phrase):
+                #     if word_phrase in word_list:
+                #         word_list.remove(word_phrase)
+                word_relation_concerned = set(word_list)
+                entity_pros = phrases[phrase]
+                for entity in entity_pros:
+                    pro = entity_pros[entity]
+                    question_entity_pro = "###".join([ques, entity, str(pro)])
+                    question_entity_pro_relation_words_concerned[question_entity_pro] = word_relation_concerned
+    write_dict(question_entity_pro_relation_words_concerned,"../data/relation/test.easy.partial.question_entity_pro_relation_words")
+    return question_entity_pro_relation_words_concerned
+
 def relation_word_num():
     word_num=dict()
     question_entity_pro_relation_words_concerned=read_dict("../data/relation/test.easy.partial.question_entity_pro_relation_words_concerned")
@@ -257,11 +312,12 @@ def predicates_types_linked_map(entity_predicate_type,entity):
 
 def hit_predicate_types_dict(predicates_type_map,relation_word_filter,predicate_importantwords,type_importantwords):
     hit_predicate_types=dict()
+    relation_word_filter_syn_der=generate_synset_der_words(relation_word_filter)
     for predicate_key in predicates_type_map:
         words_predicate_key =predicate_importantwords[predicate_key]
-        if (len(words_predicate_key & relation_word_filter) > 0):
+        if (len(words_predicate_key & relation_word_filter_syn_der) > 0):
             types_value=predicates_type_map[predicate_key]
-            type_hitted=hitted_predicates(type_importantwords, types_value, relation_word_filter)
+            type_hitted=hitted_predicates(type_importantwords, types_value, relation_word_filter_syn_der)
             if(len(type_hitted)>0):
                 if predicate_key in hit_predicate_types:
                     types_hit_value=hit_predicate_types[predicate_key]
@@ -271,15 +327,39 @@ def hit_predicate_types_dict(predicates_type_map,relation_word_filter,predicate_
                     types_hit_value = type_hitted.keys()
                     hit_predicate_types[predicate_key] = types_hit_value
     return hit_predicate_types
+
+def hit_predicate_or_types_dict(predicates_type_map,relation_word_filter,predicate_importantwords,type_importantwords):
+    hit_predicate_types=dict()
+    relation_word_filter_syn_der=generate_synset_der_words(relation_word_filter)
+    for predicate_key in predicates_type_map:
+        words_predicate_key =predicate_importantwords[predicate_key]
+        if (len(words_predicate_key & relation_word_filter_syn_der) > 0):
+            hit_predicate_types[predicate_key] = predicates_type_map[predicate_key]
+        else:
+            types_value=predicates_type_map[predicate_key]
+            type_hitted=hitted_predicates(type_importantwords, types_value, relation_word_filter_syn_der)
+            if(len(type_hitted)>0):
+                if predicate_key in hit_predicate_types:
+                    types_hit_value=hit_predicate_types[predicate_key]
+                    types_hit_value=types_hit_value|type_hitted.keys()
+                    hit_predicate_types[predicate_key]=types_hit_value
+                else:
+                    types_hit_value = type_hitted.keys()
+                    hit_predicate_types[predicate_key] = types_hit_value
+    return hit_predicate_types
+
 def conquer_relationmatch():
+    # question_entity_pro_relation_words_concerned = read_dict(
+    #     "../data/relation/test.easy.partial.question_entity_pro_relation_words_concerned")
     question_entity_pro_relation_words_concerned = read_dict(
-        "../data/relation/test.easy.partial.question_entity_pro_relation_words_concerned")
+        "../data/relation/test.easy.partial.question_entity_pro_relation_words")
     filter_words=filter_word()
     questions_hitted=set()
     ques_predicate=read_dict("../data/relation/test.easy.ques.edge")
     ques_type=read_dict("../data/relation/test.easy.ques.type")
-    entity_predicate_type,predicate_words,type_words, predicate_importantwords, predicate_lessimportantwords, type_importantwords, type_lessimportantwords=handle_entity_predicate_answer_type()
+    entity_predicate_type,predicate_synsetwords,type_synsetwords,predicate_importantwords_synsetwords,type_importantwords_synsetwords,predicate_words,type_words, predicate_importantwords, predicate_lessimportantwords, type_importantwords, type_lessimportantwords=handle_entity_predicate_answer_type()
     questions_all=set()
+    question_candidate=set()
     for question_entity_pro in question_entity_pro_relation_words_concerned:
         question = question_entity_pro.split("###")[0]
         questions_all.add(question)
@@ -290,13 +370,24 @@ def conquer_relationmatch():
         types_=ques_type[question]
         relation_word_concerned = question_entity_pro_relation_words_concerned[question_entity_pro]
         relation_word_filter=set(relation_word_concerned)-filter_words
-       # hit_predicate_types=hit_predicate_types_dict(predicates_type_map,relation_word_filter,predicate_importantwords,type_importantwords)
-        hit_predicate_types=hit_predicate_types_dict(predicates_type_map,relation_word_filter,predicate_words,type_words)
+
+      #  hit_predicate_types=hit_predicate_types_dict(predicates_type_map,relation_word_filter,predicate_synsetwords,type_synsetwords)
+        hit_predicate_types=hit_predicate_or_types_dict(predicates_type_map,relation_word_filter,predicate_synsetwords,type_synsetwords)
+     #   hit_predicate_types=hit_predicate_types_dict(predicates_type_map,relation_word_filter,predicate_importantwords_synsetwords,type_importantwords_synsetwords)
+     #   hit_predicate_types=hit_predicate_types_dict(predicates_type_map,relation_word_filter,predicate_importantwords,type_importantwords)
+      #  hit_predicate_types=hit_predicate_types_dict(predicates_type_map,relation_word_filter,predicate_words,type_words)
+        if len(hit_predicate_types)>0:
+            size_predicate_type_hitt=len(hit_predicate_types)
+            for key in hit_predicate_types:
+                size_predicate_type_hitt+=len(hit_predicate_types[key])
+           # print(size_predicate_type_hitt)
+            question_candidate.add(question)
         for hit_predicate in hit_predicate_types:
             if (hit_predicate==predicate_[0]):
                 if(len(set(types_)&hit_predicate_types[hit_predicate])>0):
               #      print(question, "\t", entity, "\t", predicate_[0], "\t", types_[0], "\t", relation_word_filter)
                     questions_hitted.add(question)
+
         # if((len(set(predicate_)&hit_imp_pre_num.keys())==0)&(len(set(predicate_)&hit_lessimp_pre_num.keys())>0)):
         #     if((len(set(types_)&hit_imp_type_num.keys())==0)&(len(set(types_)&hit_lessimp_type_num.keys())>0)):
         #         #num=hit_imp_pre_num[predicate_[0]]
@@ -305,7 +396,8 @@ def conquer_relationmatch():
     questions_unhitted=questions_all-questions_hitted
     for que in questions_unhitted:
         print(que)
-   # print(len(questions_hitted))
+    print(len(questions_hitted))
+    print(len(question_candidate))
 
 #filter_word()
 conquer_relationmatch()
@@ -313,6 +405,7 @@ conquer_relationmatch()
 # name_relation_=name_relation()
 # write_dict(name_relation_,"../data/relation/graph.name.relation")
 #generate_question_entity_pro_relation_words_concerned()
+#generate_question_entity_pro_relation_words()
 #handle_entity_predicate_answer_type()
 # s=[1,1,2,3]
 # print(set(s))

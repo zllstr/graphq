@@ -170,7 +170,7 @@ public interface HandleFiles {
         //    br.write("\n");
             for (String key:nodeSegmentMap.keySet()){
                 br.write(key);
-                br.write("\n");
+                br.write("###");
            //     br.write(Integer.toString((nodeSegmentMap.get(key).size())));
             //    br.write("\n");
                 List<String> nodeSegs=nodeSegmentMap.get(key);
@@ -216,12 +216,12 @@ public interface HandleFiles {
             BufferedWriter br=new BufferedWriter(new FileWriter(writeFile));
             for (String key:nodeSegmentMap.keySet()){
                 br.write(key);
-                br.write("\n");
+                br.write("###");
                 Set<String> nodeSegs=nodeSegmentMap.get(key);
                 System.out.println(key+" "+nodeSegs);
                 for(String str:nodeSegs)
-                    br.write(str+" ");
-                br.write("\n");
+                    br.write(str+"###");
+             //   br.write("\n");
                 br.write("\n");
             }
             br.flush();
